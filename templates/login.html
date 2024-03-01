@@ -1,0 +1,172 @@
+{% extends 'base.html' %}
+{% from 'bootstrap5/form.html' import render_form %}
+
+{% block title %}Welcome Back!{% endblock %}
+{% block content %}
+
+<header class="header bg-dark text-white">
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCu4LpF63EcRKbH60CU1ij85xH23NGAkno&libraries=places" async defer></script>
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+  <div class="container">
+    <div class="d-flex align-items-center justify-content-between py-0.5">
+      <!-- The Function -->
+      <a class="d-flex align-items-center col-md-3 mb-2 mb-md-0 text-dark" href="{{ url_for('commfeed') }}">
+        <svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.dev/svgjs" width="128" height="32" viewBox="0 0 2000 530"><g transform="matrix(1,0,0,1,-1.2121212121212466,0.34035762353391874)"><svg viewBox="0 0 396 105" data-background-color="#001f3f" preserveAspectRatio="xMidYMid meet" height="530" width="2000" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="tight-bounds" transform="matrix(1,0,0,1,0.2400000000000091,-0.06742934051143834)"><svg viewBox="0 0 395.52 105.13485868102288" height="105.13485868102288" width="395.52"><g><svg viewBox="0 0 395.52 105.13485868102288" height="105.13485868102288" width="395.52"><g><svg viewBox="0 0 395.52 105.13485868102288" height="105.13485868102288" width="395.52"><g><svg viewBox="0 0 395.52 105.13485868102288" height="105.13485868102288" width="395.52"><g><svg viewBox="0 0 395.52 105.13485868102288" height="105.13485868102288" width="395.52"><g id="textblocktransform"><svg viewBox="0 0 395.52 105.13485868102288" height="105.13485868102288" width="395.52" id="textblock"><g><svg viewBox="0 0 395.52 105.13485868102288" height="105.13485868102288" width="395.52"><g transform="matrix(1,0,0,1,0,0)"><svg width="395.52" viewBox="3.25 -38.8 149.59 39.5" height="105.13485868102288" data-palette-color="url(#f002632f-d4ab-40a3-97f2-bba5120f7ad4)"><g class="wordmark-text-0" data-fill-palette-color="primary" id="text-0"></g></svg></g></svg></g></svg></g></svg></g></svg></g></svg></g></svg></g><defs></defs><mask id="c166a3ac-d309-4dec-b4d6-d066e5088c89"><g id="SvgjsG1160"><svg viewBox="0 0 395.52 105.13485868102288" height="105.13485868102288" width="395.52"><g><svg viewBox="0 0 395.52 105.13485868102288" height="105.13485868102288" width="395.52"><g><svg viewBox="0 0 395.52 105.13485868102288" height="105.13485868102288" width="395.52"><g><svg viewBox="0 0 395.52 105.13485868102288" height="105.13485868102288" width="395.52"><g><svg viewBox="0 0 395.52 105.13485868102288" height="105.13485868102288" width="395.52"><g id="SvgjsG1159"><svg viewBox="0 0 395.52 105.13485868102288" height="105.13485868102288" width="395.52" id="SvgjsSvg1158"><g><svg viewBox="0 0 395.52 105.13485868102288" height="105.13485868102288" width="395.52"><g transform="matrix(1,0,0,1,0,0)"><svg width="395.52" viewBox="3.25 -38.8 149.59 39.5" height="105.13485868102288" data-palette-color="url(#f002632f-d4ab-40a3-97f2-bba5120f7ad4)"><g class="wordmark-text-0" data-fill-palette-color="primary" id="SvgjsG1157"><path d="M3.25-10.75L3.25-32.85 10.7-34.05 10.7-26.3 19.65-26.3 19.65-20.1 10.7-20.1 10.7-10.85Q10.7-8.5 11.53-7.1 12.35-5.7 14.85-5.7L14.85-5.7Q16.05-5.7 17.32-5.93 18.6-6.15 19.65-6.55L19.65-6.55 20.7-0.75Q19.35-0.2 17.7 0.2 16.05 0.6 13.65 0.6L13.65 0.6Q10.6 0.6 8.6-0.23 6.6-1.05 5.4-2.53 4.2-4 3.73-6.1 3.25-8.2 3.25-10.75L3.25-10.75ZM24.45-12.95L24.45-12.95Q24.45-16.45 25.52-19.07 26.6-21.7 28.35-23.45 30.1-25.2 32.37-26.1 34.65-27 37.05-27L37.05-27Q42.65-27 45.9-23.58 49.15-20.15 49.15-13.5L49.15-13.5Q49.15-12.85 49.1-12.08 49.05-11.3 49-10.7L49-10.7 32.1-10.7Q32.35-8.4 34.25-7.05 36.15-5.7 39.35-5.7L39.35-5.7Q41.4-5.7 43.37-6.08 45.35-6.45 46.6-7L46.6-7 47.6-0.95Q47-0.65 46-0.35 45-0.05 43.77 0.18 42.55 0.4 41.15 0.55 39.75 0.7 38.35 0.7L38.35 0.7Q34.8 0.7 32.17-0.35 29.55-1.4 27.82-3.23 26.1-5.05 25.27-7.55 24.45-10.05 24.45-12.95ZM32.1-15.8L41.95-15.8Q41.9-16.75 41.62-17.65 41.35-18.55 40.77-19.25 40.2-19.95 39.32-20.4 38.45-20.85 37.15-20.85L37.15-20.85Q35.9-20.85 35-20.43 34.1-20 33.5-19.3 32.9-18.6 32.57-17.68 32.25-16.75 32.1-15.8L32.1-15.8ZM54.65-10.75L54.65-32.85 62.1-34.05 62.1-26.3 71.05-26.3 71.05-20.1 62.1-20.1 62.1-10.85Q62.1-8.5 62.92-7.1 63.75-5.7 66.25-5.7L66.25-5.7Q67.45-5.7 68.72-5.93 70-6.15 71.05-6.55L71.05-6.55 72.1-0.75Q70.75-0.2 69.1 0.2 67.45 0.6 65.05 0.6L65.05 0.6Q62 0.6 60-0.23 58-1.05 56.8-2.53 55.6-4 55.12-6.1 54.65-8.2 54.65-10.75L54.65-10.75ZM84.54 0L77.09 0 77.09-37.6 84.54-38.8 84.54-26.2Q85.29-26.45 86.47-26.68 87.64-26.9 88.74-26.9L88.74-26.9Q91.94-26.9 94.07-26.03 96.19-25.15 97.47-23.55 98.74-21.95 99.27-19.75 99.79-17.55 99.79-14.85L99.79-14.85 99.79 0 92.34 0 92.34-13.95Q92.34-17.55 91.42-19.05 90.49-20.55 87.99-20.55L87.99-20.55Q86.99-20.55 86.12-20.38 85.24-20.2 84.54-20L84.54-20 84.54 0ZM105.29-12.95L105.29-12.95Q105.29-16.45 106.37-19.07 107.44-21.7 109.19-23.45 110.94-25.2 113.22-26.1 115.49-27 117.89-27L117.89-27Q123.49-27 126.74-23.58 129.99-20.15 129.99-13.5L129.99-13.5Q129.99-12.85 129.94-12.08 129.89-11.3 129.84-10.7L129.84-10.7 112.94-10.7Q113.19-8.4 115.09-7.05 116.99-5.7 120.19-5.7L120.19-5.7Q122.24-5.7 124.22-6.08 126.19-6.45 127.44-7L127.44-7 128.44-0.95Q127.84-0.65 126.84-0.35 125.84-0.05 124.62 0.18 123.39 0.4 121.99 0.55 120.59 0.7 119.19 0.7L119.19 0.7Q115.64 0.7 113.02-0.35 110.39-1.4 108.67-3.23 106.94-5.05 106.12-7.55 105.29-10.05 105.29-12.95ZM112.94-15.8L122.79-15.8Q122.74-16.75 122.47-17.65 122.19-18.55 121.62-19.25 121.04-19.95 120.17-20.4 119.29-20.85 117.99-20.85L117.99-20.85Q116.74-20.85 115.84-20.43 114.94-20 114.34-19.3 113.74-18.6 113.42-17.68 113.09-16.75 112.94-15.8L112.94-15.8ZM152.84-25.85L151.59-19.7Q150.59-19.95 149.24-20.23 147.89-20.5 146.34-20.5L146.34-20.5Q145.64-20.5 144.66-20.38 143.69-20.25 143.19-20.1L143.19-20.1 143.19 0 135.74 0 135.74-24.9Q137.74-25.6 140.46-26.23 143.19-26.85 146.54-26.85L146.54-26.85Q147.14-26.85 147.99-26.78 148.84-26.7 149.69-26.58 150.54-26.45 151.39-26.28 152.24-26.1 152.84-25.85L152.84-25.85Z" fill="white"></path></g></svg></g></svg></g></svg></g></svg></g></svg></g></svg></g></svg></g><defs><mask></mask></defs></svg><rect width="395.52" height="105.13485868102288" fill="black" stroke="none" visibility="hidden"></rect></g></mask><linearGradient x1="0" x2="1" y1="0.5" y2="0.5" id="f002632f-d4ab-40a3-97f2-bba5120f7ad4"><stop stop-color="#f00b51" offset="0"></stop><stop stop-color="#730062" offset="1"></stop></linearGradient><rect width="395.52" height="105.13485868102288" fill="url(#f002632f-d4ab-40a3-97f2-bba5120f7ad4)" mask="url(#c166a3ac-d309-4dec-b4d6-d066e5088c89)" data-fill-palette-color="primary"></rect></svg><rect width="395.52" height="105.13485868102288" fill="none" stroke="none" visibility="hidden"></rect></g></svg></g></svg>
+      </a>
+      <!-- Everything Else-->
+      <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
+        <li class="nav-link px-2 text-secondary">
+          <a class="nav-link text-light" href="{{ url_for('commfeed') }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-house" viewBox="0 0 16 16">
+              <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293zM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5z"/>
+            </svg>
+          </a>
+        </li>
+        <li class="nav-link px-2 text-secondary">
+          <a class="nav-link text-light" href="{{ url_for('explore_communities') }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-compass" viewBox="0 0 16 16">
+              <path d="M8 16.016a7.5 7.5 0 0 0 1.962-14.74A1 1 0 0 0 9 0H7a1 1 0 0 0-.962 1.276A7.5 7.5 0 0 0 8 16.016m6.5-7.5a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0"/>
+              <path d="m6.94 7.44 4.95-2.83-2.83 4.95-4.949 2.83 2.828-4.95z"/>
+            </svg>
+          </a>
+        </li>
+        <li class="nav-link px-2 text-secondary">
+          <div class="dropdown">
+            <a class="nav-link text-light" id="notificationsDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-bell" viewBox="0 0 16 16">
+                <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2M8 1.918l-.797.161A4 4 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4 4 0 0 0-3.203-3.92zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5 5 0 0 1 13 6c0 .88.32 4.2 1.22 6"/>
+              </svg>
+            </a>
+            <div class="dropdown-menu" aria-labelledby="notificationsDropdown">
+              <!-- Add dynamic content for notifications here -->
+              {% for notification in notifications %}
+                <a class="dropdown-item" href="{{ url_for('show_post', post_id=notification.post_id) }}">
+                  {{ notification.message }}
+                </a>
+              {% endfor %}
+              {% if unread_notifications|length == 0 %}
+                <span class="dropdown-item">No notifications</span>
+              {% endif %}
+            </div>
+          </div>
+        </li>
+        <li class="nav-link px-2 text-secondary">
+          <a class="nav-link text-light dropdown" href="{% if current_user.is_authenticated %} {{ url_for('show_profile', user_id=current_user.id) }} {% else %} {{ url_for('login') }} {% endif %}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-file-person" viewBox="0 0 16 16">
+              <path d="M12 1a1 1 0 0 1 1 1v10.755S12 11 8 11s-5 1.755-5 1.755V2a1 1 0 0 1 1-1zM4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z"/>
+              <path d="M8 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
+            </svg>
+          </a>
+        </li>
+        <li class="nav-link px-2 text-secondary">
+          <a class="nav-link text-light" href="{{ url_for('post') }}" id="createpostbtn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-plus-square" viewBox="0 0 16 16">
+              <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z"/>
+              <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+            </svg>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+
+
+<style>
+    
+    #email {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-sizing: border-box;
+      font-size: 16px;
+    }
+
+    #password {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-sizing: border-box;
+      font-size: 16px;
+    }
+
+    #button {
+      background-color: #007bff;
+      color: #fff;
+      padding: 10px 15px;
+      margin-top: 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    #reglink {
+      margin-top: 10px;
+    }
+</style>
+
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-sm-12 col-md-6">
+      <div class="card mt-5">
+        <div class="card-body">
+          <h2 class="card-title">Who Are You, Again?</h2>
+
+          <form method="post">
+            {{ form.hidden_tag() }}
+            <div class="form-group">
+              {{ form.email(class="form-control", id="email", placeholder="Email") }}
+            </div>
+            <div class="form-group">
+              {{ form.password(class="form-control", id="password", placeholder="Password") }}
+            </div>
+            <div class="form-group">
+              {{ form.submit(class="btn btn-primary", id="button") }}
+            </div>
+            <div class="form-group" id="reglink">
+              Don't have an account? <a href="{{ url_for('register') }}">
+                Register
+              </a>
+            </div>
+          </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  if ( window.history.replaceState ) {
+      window.history.replaceState( null, null, window.location.href );
+  }
+</script>
+
+<!--Notis-->
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var notificationsDropdown = new bootstrap.Dropdown(document.getElementById('notificationsDropdown'));
+  });
+</script>
+
+<script>
+  document.addEventListener("click", function (event) {
+      const notificationsDropdown = document.getElementById("notificationsDropdown");
+      const dropdownMenu = document.querySelector(".dropdown-menu");
+
+      if (!notificationsDropdown.contains(event.target) && !dropdownMenu.contains(event.target)) {
+          // Clicked outside the dropdown, close it
+          dropdownMenu.classList.remove("show");
+      }
+  });
+</script>
+
+{% endblock %}
