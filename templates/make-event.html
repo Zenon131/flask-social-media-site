@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% from 'bootstrap5/form.html' import render_form %}
+
+{% block title %}Tell Us About Yourself!{% endblock %}
+{% block content %}
+
+<header class="header bg-dark text-white">
+  <div class="container">
+      <div class="d-flex align-items-center justify-content-between py-0.5 mb-2">
+          <!-- Single Button for All Posts -->
+          <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
+              <li class="nav-link px-1 text-secondary">
+                  <a href="{{ url_for('commfeed') }}" class="nav-link text-light">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
+                          <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+                      </svg>
+                  </a>
+              </li>
+          </ul>
+      </div>
+  </div>
+</header>
+
+<main class="mb-4">
+
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-sm-12 col-md-6">
+        <div class="card mt-2 bg-dark">
+          <div class="card-body">
+            <h2 class="card-title text-white">Post An Event</h2>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-sm-12 col-md-6">
+        <div class="card mt-2 bg-dark">
+          <div class="card-body text-white">
+              {{ render_form(form, novalidate=True) }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+{% endblock %}

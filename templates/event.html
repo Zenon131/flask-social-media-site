@@ -1,0 +1,243 @@
+{% extends 'base.html' %}
+{% block title %}Community Feed{% endblock %}
+{% from 'bootstrap5/form.html' import render_form %}
+
+{% block content %}
+<header class="header bg-dark text-white">
+  <!-- Container for header content -->
+  <div class="container">
+      <div class="d-flex align-items-center justify-content-between py-0.5 mb-2">
+          <!-- Navigation for All Posts -->
+          <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
+              <li class="nav-link px-1 text-secondary">
+                  <a href="{{ url_for('commfeed') }}" class="nav-link text-light">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
+                          <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+                      </svg>
+                  </a>
+              </li>
+          </ul>
+      </div>
+  </div>
+</header>
+
+
+<!-- Add a section to display blog posts -->
+
+<div class="container mt-5 justify-content-center">
+  <div class="p-2 p-md-2 mb-0.5 rounded text-body-emphasis bg-dark">
+    <div class="container text-center">
+    </div>
+  </div>
+</div>
+
+<!-- <div class="container">
+  <div class="nav-scroller py-2 mb-2 border-bottom">
+    <nav class="nav nav-underline justify-content-center">
+      <a class="nav-link px-4 text-white text-light-primary-emphasis active fst-italic" href="{{ url_for('commfeed') }}">University Feed</a>
+      <a class="nav-link px-4 text-white text-light-primary-emphasis active fst-italic" href="{{ url_for('commfeed') }}">University Feed</a>
+    </nav>
+  </div>
+</div> -->
+
+<div class="container">
+  <div class="row">
+    <!-- Display the Post counter and Status update field in the left column -->
+    <div class="col-md-3 floating-card">
+      <div class="card mt-2 bg-dark d-inline-block w-auto">
+        <div class="card-body">
+          {% if entries|length == 1 %}
+            <p class="card-text fst-italic text-white text-light-center-secondary">{{ entries|length }} Thing Is Happening</p>
+          {% else %}
+            <p class="card-text fst-italic text-white text-light-center-secondary">{{ entries|length }} Things Are Happening</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+<!-- Display posts and events in the middle column -->
+  <div class="col-md-6 justify-content-center">
+    {% if entries %}
+        {% for entry in entries %}
+            {% if entry.__tablename__ == "posts" %}
+                <!-- This is a post -->
+                <div class="card mt-2">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="{{ url_for('show_post', post_id=entry.id) }}">{{ entry.title }}</a></h5>
+                        <p class="card-text">{{ entry.content }}</p>
+                        <p class="card-text"><small class="text-muted">{{ entry.user.name }} | {{ entry.postedfrom }}</small></p>
+                    </div>
+                </div>
+            {% elif entry.__tablename__ == "events" %}
+                <!-- This is an event -->
+                <div class="card mt-2 event-card">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="{{ url_for('show_event', event_id=entry.id) }}">{{ entry.title }}</a></h5>
+                        <p class="card-text">{{ entry.description }}</p>
+                        <p class="card-text"><small class="text-muted">{{ entry.user.name }} | {{ entry.location }} at {{ entry.time }}</small></p>
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+    {% else %}
+        <p class="text-center">There are no posts or events in this community yet.</p>
+    {% endif %}
+  </div>
+
+
+    <!-- Display the Status form field in the right column -->
+    <div class="col-md-3">
+      <div class="card mt-2 bg-dark">
+        <div class="card-body text-white">
+          <h5 class="card-title">Your Status</h5>
+          <!-- Enhance the status display -->
+          <p class="card-text fst-italic text-light-center-secondary">{{ status.status }}</p>
+          {{ render_form(form, novalidate=True) }}
+        </div>
+      </div>
+
+      <div id="popularSpots" class="card mt-2 bg-dark">
+        <div class="card-body text-white">
+            <h5 class="card-title">Hot Spots Near You</h5>
+            <ul id="popularSpotsList" class="list-group">
+                <!-- The popular spots will be dynamically added here -->
+            </ul>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+
+
+<!-- JavaScript to filter posts based on the search input -->
+<button onclick="topFunction()" id="backToTopBtn" title="Go to top" class="btn btn-secondary back-to-top-btn">Back to Top</button>
+
+<script>
+// When the user scrolls down 20px from the top of the document, show the button
+window.onscroll = function() {scrollFunction()};
+
+function scrollFunction() {
+    if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+        document.getElementById("backToTopBtn").style.display = "block";
+    } else {
+        document.getElementById("backToTopBtn").style.display = "none";
+    }
+}
+
+// When the user clicks on the button, scroll to the top of the document
+function topFunction() {
+    document.body.scrollTop = 0; // For Safari
+    document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE, and Opera
+}
+</script>
+
+<style>
+  /* Style for the floating button */
+  #backToTopBtn {
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 99;
+  }
+
+  .event-card {
+    background-color: #3498db; /* Blue color */
+  }
+</style>
+
+
+<!-- Geolocation Attempt -->
+<!-- Add this to the head section of your HTML file -->
+<script>
+  // Function to fetch popular spots based on user's location
+  function fetchPopularSpots(userLocation) {
+    var request = {
+      location: userLocation,
+      radius: 5000,
+      type: ['restaurant', 'bar', 'park', 'museum', 'cafe', 'school', 'shopping mall', 'gym']
+    };
+
+    var service = new google.maps.places.PlacesService(document.createElement('div')); // No need for a map
+
+    service.nearbySearch(request, function(results, status) {
+      if (status == google.maps.places.PlacesServiceStatus.OK) {
+        displayPopularSpots(results);
+      }
+    });
+  }
+
+
+  function getUserLocation() {
+  return new Promise((resolve, reject) => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        position => {
+          const userLocation = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          };
+          console.log('User Location:', userLocation);
+          resolve(userLocation);
+        },
+        error => {
+          console.error('Error getting user location:', error);
+          reject(error);
+        }
+      );
+    } else {
+      console.error('Geolocation is not supported by this browser.');
+      reject('Geolocation not supported');
+    }
+  });
+}
+
+
+
+  // Function to display popular spots in the list
+  function displayPopularSpots(results) {
+    var popularSpotsList = document.getElementById('popularSpotsList');
+
+    // Clear existing list items
+    popularSpotsList.innerHTML = '';
+
+    // Display the top 10 spots
+    for (var i = 0; i < Math.min(results.length, 10); i++) {
+      var spot = results[i];
+      var listItem = document.createElement('li');
+      listItem.className = 'list-group-item';
+      listItem.textContent = spot.name;
+      popularSpotsList.appendChild(listItem);
+    }
+  }
+
+  // Fetch and display popular spots when the page loads
+  getUserLocation()
+    .then(fetchPopularSpots)
+    .catch(error => {
+      console.error('Error getting user location:', error);
+    });
+</script>
+
+<!-- JavaScript to filter posts based on the search input -->
+<script>
+  document.getElementById('searchInput').addEventListener('input', function() {
+    var searchQuery = this.value.toLowerCase();
+    var posts = document.querySelectorAll('.card-title a');
+
+    posts.forEach(function(post) {
+      var title = post.innerText.toLowerCase();
+      var postCard = post.closest('.card');
+
+      if (title.includes(searchQuery)) {
+        postCard.style.display = 'block';
+      } else {
+        postCard.style.display = 'none';
+      }
+    });
+  });
+</script>
+{% endblock %}
