@@ -17,7 +17,7 @@
       </a>
       <form class="d-flex flex-grow-1 me-3 text-dark px-2 search-form" onsubmit="return false;">
        <div class="search-container">
-        <input id="searchInput" class="form-control text-dark rounded-pill" type="search" placeholder="Search Communities" aria-label="Search" data-listener-added_de30e23a="true">
+        <input id="searchInput" class="form-control text-dark rounded-pill" type="search" placeholder="Search Circles" aria-label="Search" data-listener-added_de30e23a="true">
         </div>
       </form>
       <!-- Everything Else-->
@@ -117,7 +117,7 @@
       <ul class="list-group list-unstyled">
         {% for circle in all_circles %}
           <li class="list-group-item">
-            <p><a href="{{ url_for('circle_page', circle_id=circle.id) }}" class="circl-name">{{ circle.name }}</a></p>
+            <p><a href="{{ url_for('circle_page', circle_id=circle.id) }}" class="circle-name">{{ circle.name }}</a></p>
             <p class="circle-description">{{ circle.description }}</p>
             <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModal{{ circle.id }}">
               Leave Circle
@@ -189,7 +189,7 @@
   var searchQuery = this.value.toLowerCase();
   var circles = document.querySelectorAll('.circle-name');
 
-  circle.forEach(function(circle) {
+  circles.forEach(function(circle) {
     var name = circle.innerText.toLowerCase();
     var circleCard = circle.closest('.list-group-item');
 
