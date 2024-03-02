@@ -92,12 +92,22 @@
                     height: auto;
                     border-radius: 5px; /* Optional: Add border-radius to images inside post content */
                 }
+
+                #post-card-body {
+                  width: auto;
+                }
+
             </style>
 
-            <div class="card mt-2 border border-primary rounded">
+            <div class="card mt-2 border border-primary rounded" id="post-card-body">
                 <div class="card-body">
-                    <h5 class="card-title text-primary">{{ post.title }}</h5>
+                    <h5 class="card-title">{{ post.title }}</h5>
                     <div class="card-text post-content">{{ post.content|safe }}</div>
+                    {% if post.photo_url %}
+                      <div class="text-center"> 
+                        <img src="{{ post.photo_url }}" alt="Post Image" class="post-image">
+                      </div>
+                    {% endif %}
                     <p class="card-text"><small class="text-muted"><a href="{{ url_for('show_profile', user_id=post.user.id) }}">{{ post.user.display_name }}</a> | {{ post.postedfrom }} | {{ post.comments|length }} <a href="{{ url_for('show_post', post_id=post.id) }}">Comments</a> | {{ post.timestamp.strftime("%m.%d.%y") }}</small></p>
                 </div>
             </div>
@@ -175,7 +185,7 @@
     }
   
     .card-title a {
-      color: #007bff; /* Link color for post titles */
+      color: "#000000"; /* Link color for post titles */
       text-decoration: none;
     }
   

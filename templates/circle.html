@@ -159,7 +159,7 @@
               </button>
           </form>
           <!-- List for Comments -->
-          <ul class="messageList">
+          <ul id="message-list" class="messageList" stye="overflow-y: scroll;">
               {% if messages %}
                   {% for message in messages %}
                       <li class="mb-3">
@@ -227,6 +227,7 @@
         list-style-type: none;
         padding: 0;
         margin-top: 20px;
+        flex-direction: column-reverse;
       }
     
       .messages-text {
@@ -398,6 +399,7 @@ function topFunction() {
     .message-container {
       max-height: 65vh;
       overflow: auto;
+      flex-direction: column-reverse;
       position: relative;
     }
 
@@ -545,12 +547,6 @@ function topFunction() {
       document.getElementById('message-form').reset();
   }
 
-  // Check if the messages container exceeds the maximum height
-  if (messagesContainer.scrollHeight > messagesContainer.clientHeight) {
-        // Scroll to the bottom to keep the latest message visible
-        messagesContainer.scrollTop = messagesContainer.scrollHeight - messagesContainer.clientHeight;
-  }
-  
 </script>
 
 <!--Notis-->
