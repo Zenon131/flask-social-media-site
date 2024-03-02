@@ -12,7 +12,6 @@ blinker==1.7.0
 Bootstrap-Flask==2.3.3
 build==1.0.3
 CacheControl==0.13.1
-canvas==0.3
 ccxt==4.2.4
 certifi==2023.7.22
 cffi==1.16.0
