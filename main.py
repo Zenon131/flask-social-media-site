@@ -5,7 +5,6 @@ from wtforms import StringField, SubmitField, SelectField, PasswordField, TextAr
 from wtforms.validators import DataRequired, URL, AnyOf, EqualTo, Email, Length
 from flask_wtf.csrf import CSRFProtect
 import secrets
-import time
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
