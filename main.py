@@ -301,7 +301,7 @@ with app.app_context():
 
 
 #---------------------------------------------------------------------ROUTES---------------------------------------------------------------------#
-@app.route("/tether")
+@app.route("/")
 def home():
     return render_template('index.html')
 
