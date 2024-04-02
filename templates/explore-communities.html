@@ -36,13 +36,13 @@
             </svg>
           </a>
         </li>
-        <li class="nav-link px-2 text-secondary">
+        <!-- <li class="nav-link px-2 text-secondary">
           <a class="nav-link text-light" href="{{ url_for('my_circles') }}">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-circle" viewBox="0 0 16 16">
               <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
             </svg>
           </a>
-        </li>
+        </li> -->
         <li class="nav-link px-2 text-secondary">
           <div class="dropdown">
             <a class="nav-link text-light" id="notificationsDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -110,7 +110,7 @@
   <div class="row">
 
 <!-- User's created communities -->
-<div class="col-md-6">
+<div class="col-6">
   <div class="card">
     <div class="card-body">
       <h2 class="card-title">My Communities</h2>
@@ -148,10 +148,10 @@
 
     
     <!-- Communities to explore -->
-    <div class="col-md-6">
+    <div class="col-6">
       <div class="card">
         <div class="card-body">
-          <h2 class="card-title">Explore Communities</h2>
+          <h2 class="card-title">Explore</h2>
           <ul class="list-group list-unstyled">
             {% for community in all_communities if community.name != 'Home' and community not in created_communities and community.location == current_user.location %}
               <li class="list-group-item">

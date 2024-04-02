@@ -33,7 +33,7 @@ configure_uploads(app, photos)
 Bootstrap5(app)
 csrf = CSRFProtect(app)
 ckeditor = CKEditor(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///epsilon8.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///epsilon111.db'
 db = SQLAlchemy()
 db.init_app(app)
 
@@ -100,7 +100,6 @@ class CreateCommunityForm(FlaskForm):
     description = TextAreaField('Community Description', validators=[Length(max=150)])
     values = StringField('Community Values', validators=[DataRequired(), Length(max=50)])
     location = SelectField('Community Anchor Point (Cannot Be Changed Later)', choices=['Select Community Anchor Point...'] + cities, validators=[AnyOf(cities, message='Invalid city selection')])
-    visibility = SelectField('Community Visibility', choices=['Public', 'Private'], validators=[DataRequired()])
     submit = SubmitField('Create')
     
 
@@ -539,6 +538,7 @@ def create_community():
             description=form.description.data,
             values=form.values.data,
             creator=current_user,
+            creator_id=current_user.id,
             location=form.location.data
         )
         db.session.add(new_community)

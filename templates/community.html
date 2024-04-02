@@ -36,13 +36,13 @@
             </svg>
           </a>
         </li>
-        <li class="nav-link px-2 text-secondary">
+        <!-- <li class="nav-link px-2 text-secondary">
           <a class="nav-link text-light" href="{{ url_for('my_circles') }}">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-circle" viewBox="0 0 16 16">
               <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
             </svg>
           </a>
-        </li>
+        </li> -->
         <li class="nav-link px-2 text-secondary">
           <div class="dropdown">
             <a class="nav-link text-light" id="notificationsDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -113,7 +113,7 @@
     <div class="container">
         <div class="row">
             <!-- Sidebar - My Communities -->
-            <div class="col-md-3 floating-card">
+            <div class="col-md-3 floating-card d-none d-lg-block">
                 <div class="card mt-2 bg-dark d-inline-block w-auto">
                     <div class="card-body">
                         <div class="btn-group" role="group">
@@ -125,10 +125,9 @@
                             </button>
                         </div>
                         {% set current_community_id = community.id %}
-                            <ul class="list-group mt-4">
+                            <ul class="list-group mt-2">
                                 <!-- Replace this with dynamic rendering of user's communities -->
-                                {% set counter = 0 %}
-                                {% for community in communities if community.name != 'Home' and counter < 10 %}
+                                {% for community in communities if community.name != 'Home' %}
                                 <li id="communityitem">
                                   <a href="{{ url_for('community_page', community_id=community.id) }}" class="btn btn-outline-light p-2 {% if community.id == current_community_id %}active{% endif %}" style="color: #f00b51;">
                                     <div class="d-flex justify-content-between align-items-center">
@@ -136,7 +135,6 @@
                                     </div>
                                   </a>
                                 </li>
-                                {% set counter = counter + 1 %}
                                 {% endfor %}
                               </ul>         
                     </div>
@@ -144,7 +142,7 @@
             </div>
 
             <!-- Main Content - Feed -->
-            <div class="col-md-6 justify-content-center">
+            <div class="col-md-6 justify-content-center d-block">
                 <!-- Your existing feed content here -->
                 {% if entries %}
                     {% for entry in entries %}
@@ -198,7 +196,7 @@
             </div>
 
             <!-- Sidebar - Status Form and Popular Spots -->
-            <div class="col-md-3">
+            <div class="col-md-6 col-lg-3 d-none d-md-block">
               <div class="card mt-2 bg-dark">
                 <div class="card-body text-white">
                   <h5 class="card-title" id="status-card-title">Your Status</h5>
