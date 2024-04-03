@@ -21,18 +21,18 @@
           <div id="searchResults" class="search-results"></div>
         </div>
       </form>
+      
       <!-- Everything Else-->
       <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
         <li class="nav-link px-2 text-secondary">
-          <a class="nav-link text-light" href="{{ url_for('commfeed') }}">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-house-fill" viewBox="0 0 16 16">
-              <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L8 2.207l6.646 6.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293z"/>
-              <path d="m8 3.293 6 6V13.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 13.5V9.293l6-6Z"/>
+          <a class="nav-link btn btn-dark active rounded-5 text-light" href="{{ url_for('commfeed') }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-house" viewBox="0 0 16 16">
+              <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293zM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5z"/>
             </svg>
           </a>
         </li>
         <li class="nav-link px-2 text-secondary">
-          <a class="nav-link text-light" href="{{ url_for('explore_communities') }}">
+          <a class="nav-link btn btn-dark rounded-5 text-light" href="{{ url_for('explore_communities') }}">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-compass" viewBox="0 0 16 16">
               <path d="M8 16.016a7.5 7.5 0 0 0 1.962-14.74A1 1 0 0 0 9 0H7a1 1 0 0 0-.962 1.276A7.5 7.5 0 0 0 8 16.016m6.5-7.5a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0"/>
               <path d="m6.94 7.44 4.95-2.83-2.83 4.95-4.949 2.83 2.828-4.95z"/>
@@ -48,7 +48,7 @@
         </li> -->
         <li class="nav-link px-2 text-secondary">
           <div class="dropdown">
-            <a class="nav-link text-light" id="notificationsDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <a class="nav-link btn btn-dark rounded-5 text-light" id="notificationsDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-bell" viewBox="0 0 16 16">
                 <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2M8 1.918l-.797.161A4 4 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4 4 0 0 0-3.203-3.92zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5 5 0 0 1 13 6c0 .88.32 4.2 1.22 6"/>
               </svg>
@@ -67,17 +67,19 @@
           </div>
         </li>
         <li class="nav-link px-2 text-secondary">
-          <a class="nav-link text-light dropdown" href="{% if current_user.is_authenticated %} {{ url_for('show_profile', user_id=current_user.id) }} {% else %} {{ url_for('login') }} {% endif %}">
+          <div class="dropdown">
+          <a class="nav-link btn btn-dark rounded-5 text-light dropdown" href="{% if current_user.is_authenticated %} {{ url_for('show_profile', user_id=current_user.id) }} {% else %} {{ url_for('login') }} {% endif %}">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-file-person" viewBox="0 0 16 16">
               <path d="M12 1a1 1 0 0 1 1 1v10.755S12 11 8 11s-5 1.755-5 1.755V2a1 1 0 0 1 1-1zM4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z"/>
               <path d="M8 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
             </svg>
           </a>
+          </div>
         </li>
         <!-- Only show Create Post button if user is logged in -->
         {% if logged_in %}
         <li class="nav-link px-2 text-secondary">
-          <a class="nav-link text-light" href="{{ url_for('post') }}" id="createpostbtn">
+          <a class="nav-link btn btn-dark rounded-5 text-light" href="{{ url_for('post') }}" id="createpostbtn">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-plus-square" viewBox="0 0 16 16">
               <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z"/>
               <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
@@ -88,10 +90,10 @@
         <!-- Hide the Login/Registration navigation for logged-in users -->
         {% if not logged_in %}
           <li class="nav-link px-2 text-secondary">
-            <a class="nav-link text-light" href="{{ url_for('login') }}">Login</a>
+            <a class="nav-link btn btn-dark rounded-5 text-light" href="{{ url_for('login') }}">Login</a>
           </li>
           <li class="nav-link px-2 text-secondary">
-            <a class="nav-link text-light" href="{{ url_for('register') }}">Register</a>
+            <a class="nav-link btn btn-dark rounded-5 text-light" href="{{ url_for('register') }}">Register</a>
           </li>
         {% endif %}
       </ul>

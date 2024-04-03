@@ -33,7 +33,7 @@ configure_uploads(app, photos)
 Bootstrap5(app)
 csrf = CSRFProtect(app)
 ckeditor = CKEditor(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///epsilon111.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///epsilon1111.db'
 db = SQLAlchemy()
 db.init_app(app)
 
@@ -261,7 +261,7 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(80), unique=True, nullable=False)
     name = db.Column(db.String(20), unique=True, nullable=False)
     display_name = db.Column(db.String(20), unique=True, nullable=True)
-    visibility = db.Column(db.String(20), unique=True, nullable=False)
+    visibility = db.Column(db.String(20), nullable=False)
     password = db.Column(db.String(120), nullable=False)
     contactinfo = db.Column(db.String(80), unique=True, nullable=False)
     bio = db.Column(db.String(80))
@@ -919,7 +919,7 @@ def event():
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for('home'))
+    return redirect(url_for('login'))
 
 
 
