@@ -75,11 +75,11 @@ class LoginForm(FlaskForm):
 
 
 class RegistrationForm(FlaskForm):
-    email = StringField(validators=[DataRequired(), Email()])
-    password = PasswordField(validators=[DataRequired()])
+    email = StringField(validators=[DataRequired(), Email(), Length(max=20)])
+    password = PasswordField(validators=[DataRequired(), Length(max=20)])
     confirm_password = PasswordField(validators=[EqualTo('password', message='Passwords must match')])
     name = StringField(validators=[DataRequired(), Length(max=20)])
-    contactinfo = StringField(validators=[DataRequired()])
+    contactinfo = StringField(validators=[DataRequired(), Length(max=20)])
     visibility = SelectField('Account Visibility', choices=['Public', 'Anonymous'], validators=[DataRequired()])
     location = SelectField('Select Your First Anchor Point', choices=['Select Your First Anchor Point...'] + cities, validators=[AnyOf(cities, message='Invalid city selection')])
     submit = SubmitField('Register')

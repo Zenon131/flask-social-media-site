@@ -118,22 +118,37 @@
 
               <form method="post">
                 {{ form.hidden_tag() }}
+
                 <div class="form-group">
-                  {{ form.name(class="form-control", id="name", placeholder="Name") }}
+                  <div class="char-counter-container">
+                    {{ form.name(class="form-control", id="name", placeholder="Name") }}
+                    <small class="counter"><span data-target="content-counter">0</span>/20</small>
+                  </div>
                 </div>
+
                 <div class="form-group">
-                  {{ form.description(class="form-control", id="desc", placeholder="Description") }}
+                  <div class="char-counter-container">
+                    {{ form.description(class="form-control", id="desc", placeholder="Description") }}
+                    <small class="counter"><span data-target="content-counter">0</span>/150</small>
+                  </div>
                 </div>
+
                 <div class="form-group">
-                  {{ form.values(class="form-control", id="values", placeholder="Values") }}
+                  <div class="char-counter-container">
+                    {{ form.values(class="form-control", id="values", placeholder="Values") }}
+                    <small class="counter"><span data-target="content-counter">0</span>/50</small>
+                  </div>
                 </div>
+
                 <div class="form-group">
                   {{ form.location(class="form-control", id="loc") }}
                 </div>
+
                 <div class="form-group">
                   {{ form.submit(class="btn btn-outline-light", id="button") }}
                   <a class="btn btn-outline-light" href="{{ url_for('commfeed') }}" id="button">Cancel</a>
                 </div>
+                
               </form>
 
           </div>
@@ -219,5 +234,22 @@
       }
   });
 </script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+      const textareas = document.querySelectorAll('.char-counter');
+  
+      textareas.forEach(textarea => {
+          const counter = document.querySelector(`[data-target="${textarea.id}-counter"]`);
+  
+          textarea.addEventListener('input', function () {
+              const charCount = this.value.length;
+              counter.textContent = charCount;
+          });
+      });
+  });
+  
+  </script>
+  
 
 {% endblock %}
