@@ -33,7 +33,7 @@ configure_uploads(app, photos)
 Bootstrap5(app)
 csrf = CSRFProtect(app)
 ckeditor = CKEditor(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///epsilon1111.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///epsilon11111.db'
 db = SQLAlchemy()
 db.init_app(app)
 
@@ -75,13 +75,13 @@ class LoginForm(FlaskForm):
 
 
 class RegistrationForm(FlaskForm):
-    email = StringField(validators=[DataRequired(), Email(), Length(max=20)])
+    email = StringField(validators=[DataRequired(), Email(), Length(max=40)])
     password = PasswordField(validators=[DataRequired(), Length(max=20)])
-    confirm_password = PasswordField(validators=[EqualTo('password', message='Passwords must match')])
-    name = StringField(validators=[DataRequired(), Length(max=20)])
+    confirm_password = PasswordField(validators=[DataRequired(), EqualTo('password', message='Passwords must match')])
+    name = StringField(validators=[DataRequired(), Length(max=50)])
     contactinfo = StringField(validators=[DataRequired(), Length(max=20)])
     visibility = SelectField('Account Visibility', choices=['Public', 'Anonymous'], validators=[DataRequired()])
-    location = SelectField('Select Your First Anchor Point', choices=['Select Your First Anchor Point...'] + cities, validators=[AnyOf(cities, message='Invalid city selection')])
+    location = SelectField('Select Your First Anchor Point', choices=cities, validators=[AnyOf(cities, message='Invalid city selection')])
     submit = SubmitField('Register')
 
 
@@ -811,15 +811,14 @@ def login():
         result = db.session.execute(db.select(User).where(User.email == email))
         user = result.scalar()
 
-        if user:
+        if user and check_password_hash(user.password, password):
             login_user(user)
             flash('Login successful!', 'success')
             return redirect(url_for('commfeed'))
-        elif not user:
-            flash('Login failed. Username not registered.', 'danger')
-        elif not check_password_hash(user.password, password):
-            flash('Login failed. Please check your password.', 'danger')
+        else:
+            flash('Login failed. Please check your username and password.', 'danger')
     return render_template("login.html", form=form, logged_in=current_user.is_authenticated)
+
 
 
 

@@ -128,6 +128,16 @@
       font-size: 16px;
     }
 
+    #validationCustomPassword, #validationCustomConfirmPass, #validationCustomEmail, #validationCustomLocation, #validationCustomName, #validationCustomContact {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-sizing: border-box;
+      font-size: 16px;
+    }
+
     #reglink {
       margin-top: 10px;
     }
@@ -140,22 +150,30 @@
         <div class="card-body">
           <h2 class="card-title fw-bold">Who Are You, Again?</h2>
 
-          <form method="post">
+          <form method="post" class="needs-validation" novalidate>
             {{ form.hidden_tag() }}
+
             <div class="form-group">
-              {{ form.email(class="form-control", id="email", placeholder="Email") }}
+              {{ form.email(class="form-control", id="validationCustomEmail", placeholder="Email") }}
+              <div class="invalid-feedback">
+                Please enter your email.
+              </div>
             </div>
+
             <div class="form-group">
               {{ form.password(class="form-control", id="password", placeholder="Password") }}
             </div>
+
             <div class="form-group">
               {{ form.submit(class="btn btn-outline-light", id="button") }}
             </div>
+
             <div class="form-group" id="reglink">
               Don't have an account? <a href="{{ url_for('register') }}">
                 Register
               </a>
             </div>
+
           </form>
 
         </div>
@@ -168,6 +186,25 @@
   if ( window.history.replaceState ) {
       window.history.replaceState( null, null, window.location.href );
   }
+  
+  (() => {
+  'use strict'
+
+  // Fetch all the forms we want to apply custom Bootstrap validation styles to
+  const forms = document.querySelectorAll('.needs-validation')
+
+  // Loop over them and prevent submission
+  Array.from(forms).forEach(form => {
+    form.addEventListener('submit', event => {
+      if (!form.checkValidity()) {
+        event.preventDefault()
+        event.stopPropagation()
+      }
+
+      form.classList.add('was-validated')
+    }, false)
+  })
+})()
 </script>
 
 <!--Notis-->
