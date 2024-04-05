@@ -884,8 +884,9 @@ def post():
                 return redirect(url_for('community_page', community_id=community.id))
             else:
                 return redirect(url_for('commfeed'))
-
-        flash('Community not found. Please enter a valid community name.', 'danger')
+        else:
+            flash('Community not found. Please enter a valid community name.', 'danger')
+            return redirect(url_for('post'))
     return render_template("make-post.html", form=form, current_user=current_user, logged_in=current_user.is_authenticated)
 
 
