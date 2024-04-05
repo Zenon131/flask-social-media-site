@@ -389,7 +389,7 @@ def edit_profile():
             user.bio = form.bio.data
             user.location = form.location.data
             user.visibility = form.visibility.data
-            user.display_name = form.name.data if form.visibility.data == "Public" else "Anonymous"
+            user.display_name = form.name.data if form.visibility.data == "Public" else f"Anonymous"
 
             db.session.commit()
             flash('User data updated successfully!', 'success')
