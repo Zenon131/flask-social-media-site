@@ -4,7 +4,7 @@
 {% block title %}Make a Post!{% endblock %}
 {% block content %}
 
-<header class="header bg-dark text-white">
+<header class="header-fixed-top bg-dark text-white fixed-top">
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCu4LpF63EcRKbH60CU1ij85xH23NGAkno&libraries=places" async defer></script>
   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
@@ -95,6 +95,15 @@
 
 <main class="mb-4">
 
+  <div class="container mt-5 justify-content-center">
+    <div class="p-2 p-md-2 mb-0.5 rounded text-body-emphasis">
+      <div class="container text-center">
+        <h1 class="text-light fw-bold"> 
+        </h1>
+      </div>
+    </div>
+  </div>
+
   <div class="container">
     <div class="row justify-content-center">
       <div class="col-sm-12 col-md-6">
@@ -115,37 +124,18 @@
 
             <form method="post" enctype="multipart/form-data">
               {{ form.hidden_tag() }}
-              
+
               <div class="form-group">
-                <div class="char-counter-container">
-                  {{ form.title(class="form-control char-counter", id="title", placeholder="Title") }}
-                  <small class="counter"><span data-target="title-counter">0</span>/20</small>
+                <small class="form-section-title fw-bold">Community</small>
+                <div class="char-counter-container text-light">
+                  {{ form.postto(class="form-control char-counter bg-dark text-light", id="postto", placeholder="Post to...") }}
                 </div>
               </div>
 
               <div class="form-group">
                 <div class="char-counter-container">
-                  {{ form.postto(class="form-control char-counter", id="postto", placeholder="Post to...") }}
-                  <small class="counter"><span data-target="postto-counter">0</span>/50</small>
-                </div>
-              </div>
-
-              <div class="form-group">
-                <div class="char-counter-container">
-                {{ form.postedfrom(class="form-control char-counter", id="postedfrom", placeholder="Posted From...") }}
-                <small class="counter"><span data-target="postedfrom-counter">0</span>/50</small>
-                </div>
-              </div>
-
-              <div class="form-group">
-                {{ form.photo(class="form-control", id="photo", placeholder="Upload Photo") }}
-              </div>
-
-              <div class="form-group">
-                <!-- Add a rounded container for CKEditor -->
-                <div class="char-counter-container">
-                  {{ form.content(class="form-control char-counter", id="content", placeholder="Say Something") }}
-                  <small class="counter"><span data-target="content-counter">0</span>/300</small>
+                  {{ form.content(class="form-control char-counter bg-dark text-light", id="content", placeholder="Say Something...") }}
+                  <small class="counter"><span data-target="content-counter">0</span>/100</small>
                 </div>
               </div>
 
@@ -164,6 +154,10 @@
 </main>
 
 <style>
+  #content::placeholder {
+    color: lightgray
+  }
+
   #title {
       width: 100%;
       padding: 10px;

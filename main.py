@@ -9,7 +9,7 @@ from flask_login import LoginManager, UserMixin, login_user, login_required, log
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy import create_engine, ForeignKey
-from sqlalchemy.orm import relationship, joinedload
+from sqlalchemy.orm import relationship, joinedload, backref
 from functools import wraps
 import datetime
 from flask_ckeditor import CKEditor, CKEditorField
@@ -33,7 +33,7 @@ configure_uploads(app, photos)
 Bootstrap5(app)
 csrf = CSRFProtect(app)
 ckeditor = CKEditor(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///epsilon11111.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///prebeta03.db'
 db = SQLAlchemy()
 db.init_app(app)
 
@@ -63,11 +63,6 @@ class OptinForm(FlaskForm):
     submit = SubmitField('Comment')
 
 
-class ReplyForm(FlaskForm):
-    reply_text = TextAreaField("Reply")
-    submit = SubmitField("Reply")
-
-
 class LoginForm(FlaskForm):
     email = StringField(validators=[DataRequired(), Email()])
     password = PasswordField(validators=[DataRequired()])
@@ -79,7 +74,6 @@ class RegistrationForm(FlaskForm):
     password = PasswordField(validators=[DataRequired(), Length(max=20)])
     confirm_password = PasswordField(validators=[DataRequired(), EqualTo('password', message='Passwords must match')])
     name = StringField(validators=[DataRequired(), Length(max=50)])
-    contactinfo = StringField(validators=[DataRequired(), Length(max=20)])
     visibility = SelectField('Account Visibility', choices=['Public', 'Anonymous'], validators=[DataRequired()])
     location = SelectField('Select Your First Anchor Point', choices=cities, validators=[AnyOf(cities, message='Invalid city selection')])
     submit = SubmitField('Register')
@@ -88,7 +82,6 @@ class RegistrationForm(FlaskForm):
 class CafeForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired(), Length(max=20)])
     email = StringField('New Email', validators=[DataRequired()])
-    contactinfo = StringField('Preferred method(s) of contact e.g. phone number, email address, IG, etc.', validators=[DataRequired()])
     bio = StringField('Bio', validators=[Length(max=50)])
     location = SelectField('Anchor Point', choices=['Change Your Anchor Point...'] + cities, validators=[AnyOf(cities, message='Invalid city selection')])
     visibility = SelectField('Account Visibility', choices=['Public', 'Anonymous'], validators=[DataRequired()])
@@ -150,15 +143,14 @@ class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     postto = db.Column(db.String(50), nullable=False)
     title = db.Column(db.String(50), nullable=False)
-    content = db.Column(db.Text(50), nullable=False)
-    postedfrom = db.Column(db.String(50), nullable=False)
+    content = db.Column(db.Text(100), nullable=False)
     location = db.Column(db.String(50), nullable=False)
     timestamp = db.Column(db.DateTime, default=datetime.datetime.now())
-    photo_filename = db.Column(db.String(255))
-    photo_url = db.Column(db.String(255))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     user = relationship("User", back_populates="posts")
-    comments = relationship("Comment", back_populates="parent_post")
+    
+    parent_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
+    replies = relationship("Post", backref=backref('parent', remote_side=[id]))
 
 
 class Event(db.Model):
@@ -175,11 +167,8 @@ class Event(db.Model):
 
 
 class PostForm(FlaskForm):
-    title = StringField('Title', validators=[DataRequired(), Length(max=20)])
-    postedfrom = StringField('Posted From...', validators=[DataRequired(), Length(max=50)])
-    content = TextAreaField('Content', validators=[DataRequired(), Length(max=300)])
-    postto = StringField('Post To...', validators=[DataRequired(), Length(max=50)])
-    photo = FileField('Upload Photo', validators=[FileAllowed(['jpg', 'jpeg', 'png', 'gif'], 'Images only!')])
+    content = TextAreaField('Content', validators=[DataRequired(), Length(max=100)])
+    postto = SelectField('Post To...', choices=['Home'], validators=[DataRequired(), Length(max=50)])
     submit = SubmitField('Post')
 
 
@@ -203,17 +192,6 @@ class Status(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     timestamp = db.Column(db.DateTime, default=datetime.datetime.now())
     user = relationship("User", back_populates="status")
-
-
-class Comment(db.Model):
-    __tablename__ = "comments"
-    id = db.Column(db.Integer, primary_key=True)
-    text = db.Column(db.Text(50), nullable=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
-    comment_author = relationship("User", back_populates="comments")
-    post_id = db.Column(db.Integer, db.ForeignKey("posts.id"))
-    timestamp = db.Column(db.DateTime, default=datetime.datetime.now())
-    parent_post = relationship("Post", back_populates="comments")
 
 
 class Message(db.Model):
@@ -245,16 +223,6 @@ class Optin(db.Model):
     parent_event = relationship("Event", back_populates="optins")
 
 
-# class Reply(db.Model):
-#     __tablename__ = "replies"
-#     id = db.Column(db.Integer, primary_key=True)
-#     text = db.Column(db.Text, nullable=False)
-#     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
-#     reply_author = relationship("User", back_populates="replies")
-#     post_id = db.Column(db.Integer, db.ForeignKey("posts.id"))
-#     parent_comment = relationship("Comment", back_populates="replies")
-
-
 class User(db.Model, UserMixin):
     __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True)
@@ -263,10 +231,8 @@ class User(db.Model, UserMixin):
     display_name = db.Column(db.String(20), unique=True, nullable=True)
     visibility = db.Column(db.String(20), nullable=False)
     password = db.Column(db.String(120), nullable=False)
-    contactinfo = db.Column(db.String(80), unique=True, nullable=False)
     bio = db.Column(db.String(80))
     location = db.Column(db.String(120), nullable=False)
-    comments = relationship("Comment", back_populates="comment_author")
     messages = relationship("Message", back_populates="messager")
     optins = relationship("Optin", back_populates="opter")
     posts = relationship("Post", back_populates="user")
@@ -298,6 +264,33 @@ with app.app_context():
         db.session.add(home_community)
         db.session.commit()
 
+# time calculations
+def time_difference(start_date):
+    current_date = datetime.datetime.now()
+    duration = current_date - start_date
+
+    # Calculate seconds, minutes, hours, days, months, years
+    seconds = duration.total_seconds()
+    minutes = seconds / 60
+    hours = minutes / 60
+    days = hours / 24
+    months = days / 30.44  # Approximate number of days in a month
+    years = days / 365.25  # Approximate number of days in a year (considering leap years)
+
+    # Determine the appropriate time unit based on the elapsed time
+    if years >= 1:
+        return f"{int(years)}y"
+    elif months >= 1:
+        return f"{int(months)}mo"
+    elif days >= 1:
+        return f"{int(days)}d"
+    elif hours >= 1:
+        return f"{int(hours)}h"
+    elif minutes >= 1:
+        return f"{int(minutes)}m"
+    else:
+        return f"{int(seconds)}s"
+
 
 #---------------------------------------------------------------------ROUTES---------------------------------------------------------------------#
 @app.route("/")
@@ -306,30 +299,82 @@ def home():
 
 
 
-@app.route('/submit_comment<int:post_id>', methods=['POST'])
-def submit_comment(post_id):
+# @app.route('/submit_comment<int:post_id>', methods=['POST'])
+# def submit_comment(post_id):
+#     # Process the form data
+#     comment_text = request.form.get('comment_text')
+#     comment_author = request.form.get('comment_author')
+#     requested_post = db.get_or_404(Post, post_id)
+
+#     if current_user.is_authenticated:
+#         new_comment = Comment(
+#             text=comment_text,
+#             comment_author=current_user,
+#             parent_post=requested_post
+#         )
+
+#         new_comment_as_post = Post(
+#             title="title",
+#             content=comment_text,
+#             postto=requested_post.postto,
+#             location=requested_post.location,
+#             user=comment_author,
+#             timestamp=datetime.datetime.now()
+#         )
+
+#         # Save the comment to the database
+#         db.session.add(new_comment)
+#         db.session.add(new_comment_as_post)
+#         db.session.commit()
+
+#         user_name = current_user.name
+#         comment_timestamp = datetime.datetime.now()
+
+#         if requested_post.user != current_user:
+#             notification = Notification(
+#                 message=f"New reply to '{requested_post.title}'",
+#                 user_id=requested_post.user.id,
+#                 post_id=requested_post.id
+#             )
+#             db.session.add(notification)
+#             db.session.commit()
+
+#         # Return a JSON response
+#         return jsonify(success=True, comment_text=comment_text, comment_author_name=user_name, timestamp=comment_timestamp, new_comment_as_post=new_comment_as_post)
+#     else:
+#         # Handle the case where the user is not authenticated
+#         return jsonify(success=False, message="User is not authenticated")
+
+
+
+@app.route('/submit_reply<int:post_id>', methods=['POST'])
+def submit_reply(post_id):
     # Process the form data
-    comment_text = request.form.get('comment_text')
-    comment_author = request.form.get('comment_author')
+    reply_text = request.form.get('reply_text')
+    reply_author = request.form.get('reply_author')
     requested_post = db.get_or_404(Post, post_id)
 
     if current_user.is_authenticated:
-        new_comment = Comment(
-            text=comment_text,
-            comment_author=current_user,
-            parent_post=requested_post
+        new_reply = Post(
+            content=reply_text,
+            title="title",
+            postto=requested_post.postto,
+            user=current_user,
+            location=requested_post.location,
+            timestamp=datetime.datetime.now(),
+            parent_id=requested_post.id
         )
 
-        # Save the comment to the database
-        db.session.add(new_comment)
+        # Save the reply to the database
+        db.session.add(new_reply)
         db.session.commit()
 
         user_name = current_user.name
-        comment_timestamp = datetime.datetime.now()
+        reply_timestamp = datetime.datetime.now()
 
         if requested_post.user != current_user:
             notification = Notification(
-                message=f"New reply to '{requested_post.title}'",
+                message=f"New reply to your post in '{requested_post.postto}'",
                 user_id=requested_post.user.id,
                 post_id=requested_post.id
             )
@@ -337,10 +382,47 @@ def submit_comment(post_id):
             db.session.commit()
 
         # Return a JSON response
-        return jsonify(success=True, comment_text=comment_text, comment_author_name=user_name, timestamp=comment_timestamp)
+        return jsonify(success=True, reply_text=reply_text, reply_author_name=user_name, timestamp=reply_timestamp)
     else:
         # Handle the case where the user is not authenticated
         return jsonify(success=False, message="User is not authenticated")
+
+
+
+# @app.route('/submit_reply<int:comment_id>', methods=['POST'])
+# def submit_reply(comment_id):
+#     # Process the form data
+#     reply_text = request.form.get('reply_text')
+#     reply_author = request.form.get('reply_author')
+#     requested_comment = db.get_or_404(Comment, comment_id)
+
+#     if current_user.is_authenticated:
+#         new_reply = Reply(
+#             text=reply_text,
+#             reply_author=current_user,
+#             parent_comment=requested_comment
+#         )
+
+#         # Save the reply to the database
+#         db.session.add(new_reply)
+#         db.session.commit()
+
+#         user_name = current_user.name
+#         reply_timestamp = datetime.datetime.now()
+
+#         if requested_comment.comment_author != current_user:
+#             notification = Notification(
+#                 message=f"New reply to '{requested_comment.text}'",
+#                 user_id=requested_comment.comment_author.id,
+#                 post_id=requested_comment.post_id
+#             )
+#             db.session.add(notification)
+#             db.session.commit()
+
+#         # Return a JSON response
+#         return jsonify(success=True, reply_text=reply_text, reply_author_name=user_name, timestamp=reply_timestamp)
+#     else:
+#         return jsonify(success=False, message="User is not authenticated")
 
 
 
@@ -385,7 +467,6 @@ def edit_profile():
 
             user.name = form.name.data
             user.email = form.email.data
-            user.contactinfo = form.contactinfo.data
             user.bio = form.bio.data
             user.location = form.location.data
             user.visibility = form.visibility.data
@@ -399,7 +480,6 @@ def edit_profile():
 
     form.name.data = user.name
     form.email.data = user.email
-    form.contactinfo.data = user.contactinfo
     form.bio.data = user.bio
     form.location.data = user.location
     form.visibility.data = user.visibility
@@ -445,7 +525,34 @@ def commfeed():
 
     notifications = Notification.query.filter_by(user_id=current_user.id).order_by(Notification.id.desc()).limit(5).all()
 
-    return render_template("commfeed.html", communities=communities, form=form, status=status, entries=combined_entries, notifications=notifications, current_user=current_user, logged_in=current_user.is_authenticated)
+    # time calculations
+    def time_difference(start_date):
+        current_date = datetime.datetime.now()
+        duration = current_date - start_date
+
+        # Calculate seconds, minutes, hours, days, months, years
+        seconds = duration.total_seconds()
+        minutes = seconds / 60
+        hours = minutes / 60
+        days = hours / 24
+        months = days / 30.44  # Approximate number of days in a month
+        years = days / 365.25  # Approximate number of days in a year (considering leap years)
+
+        # Determine the appropriate time unit based on the elapsed time
+        if years >= 1:
+            return f"{int(years)}y"
+        elif months >= 1:
+            return f"{int(months)}mo"
+        elif days >= 1:
+            return f"{int(days)}d"
+        elif hours >= 1:
+            return f"{int(hours)}h"
+        elif minutes >= 1:
+            return f"{int(minutes)}m"
+        else:
+            return f"{int(seconds)}s"
+
+    return render_template("commfeed.html", communities=communities, form=form, status=status, entries=combined_entries, notifications=notifications, current_user=current_user, logged_in=current_user.is_authenticated, time_difference=time_difference)
 
 
 
@@ -473,7 +580,34 @@ def community_page(community_id):
 
     notifications = Notification.query.filter_by(user_id=current_user.id).order_by(Notification.id.desc()).limit(5).all()
 
-    return render_template("community.html", form=form, status=status, community=community, communities=communities, notifications=notifications, entries=combined_entries, current_user=current_user, logged_in=current_user.is_authenticated)
+        # time calculations
+    def time_difference(start_date):
+        current_date = datetime.datetime.now()
+        duration = current_date - start_date
+
+        # Calculate seconds, minutes, hours, days, months, years
+        seconds = duration.total_seconds()
+        minutes = seconds / 60
+        hours = minutes / 60
+        days = hours / 24
+        months = days / 30.44  # Approximate number of days in a month
+        years = days / 365.25  # Approximate number of days in a year (considering leap years)
+
+        # Determine the appropriate time unit based on the elapsed time
+        if years >= 1:
+            return f"{int(years)}y"
+        elif months >= 1:
+            return f"{int(months)}mo"
+        elif days >= 1:
+            return f"{int(days)}d"
+        elif hours >= 1:
+            return f"{int(hours)}h"
+        elif minutes >= 1:
+            return f"{int(minutes)}m"
+        else:
+            return f"{int(seconds)}s"
+
+    return render_template("community.html", form=form, status=status, community=community, communities=communities, notifications=notifications, entries=combined_entries, current_user=current_user, logged_in=current_user.is_authenticated, time_difference=time_difference)
 
 
 
@@ -667,12 +801,6 @@ def register():
             flash("Username is already taken. Please choose another username.")
             return redirect(url_for('register'))
 
-        # Check if the contactinfo is already taken
-        existing_user_contactinfo = User.query.filter_by(contactinfo=form.contactinfo.data).first()
-        if existing_user_contactinfo:
-            flash("Contact information is already taken. Please choose another contact information.")
-            return redirect(url_for('register'))
-
         # Hash and salt the password
         hash_and_salted_password = generate_password_hash(
             form.password.data,
@@ -684,7 +812,6 @@ def register():
         new_user = User(
             email=form.email.data,
             name=form.name.data,
-            contactinfo=form.contactinfo.data,
             password=hash_and_salted_password,
             location=form.location.data,
             visibility=form.visibility.data,
@@ -701,7 +828,7 @@ def register():
         except IntegrityError as e:
             # Handle database constraint violation (e.g., unique constraint)
             db.session.rollback()
-            flash("Registration failed. Please choose unique values for email, username, and contact information.")
+            flash("Registration failed. Please choose unique values for email, username.")
             return redirect(url_for('register'))
 
     return render_template("reg.html", form=form, current_user=current_user)
@@ -712,25 +839,59 @@ def register():
 def show_post(post_id):
     requested_post = db.get_or_404(Post, post_id)
     body = requested_post.content
-    comment_form = CommentForm()
+    reply_form = PostForm()
 
-    if comment_form.validate_on_submit():
+    notifications = Notification.query.filter_by(user_id=requested_post.user.id).order_by(Notification.id.desc()).limit(5).all()
+
+    if reply_form.validate_on_submit():
         if not current_user.is_authenticated:
             flash("You need to login or register to comment.")
             return redirect(url_for("login"))
 
-        new_comment = Comment(
-            text=comment_form.comment_text.data,
-            comment_author=current_user,
-            parent_post=requested_post,
+        new_reply = Post(
+            title = "title",
+            content = reply_form.reply_text.data,
+            user = current_user,
+            location = current_user.location,
+            postto = requested_post.location,
+            parent_id=requested_post.id,
             timestamp = datetime.datetime.now()
         )
-        db.session.add(new_comment)
+
+        db.session.add(new_reply)
         db.session.commit()
 
 
-        comment_form.comment_text.data = ""
-    return render_template("post.html", post=requested_post, current_user=current_user, comform=comment_form, body=body, logged_in=current_user.is_authenticated)
+        reply_form.comment_text.data = ""
+    
+        # time calculations
+    def time_difference(start_date):
+        current_date = datetime.datetime.now()
+        duration = current_date - start_date
+
+        # Calculate seconds, minutes, hours, days, months, years
+        seconds = duration.total_seconds()
+        minutes = seconds / 60
+        hours = minutes / 60
+        days = hours / 24
+        months = days / 30.44  # Approximate number of days in a month
+        years = days / 365.25  # Approximate number of days in a year (considering leap years)
+
+        # Determine the appropriate time unit based on the elapsed time
+        if years >= 1:
+            return f"{int(years)}y"
+        elif months >= 1:
+            return f"{int(months)}mo"
+        elif days >= 1:
+            return f"{int(days)}d"
+        elif hours >= 1:
+            return f"{int(hours)}h"
+        elif minutes >= 1:
+            return f"{int(minutes)}m"
+        else:
+            return f"{int(seconds)}s"
+
+    return render_template("post.html", post=requested_post, current_user=current_user, repform=reply_form, body=body, logged_in=current_user.is_authenticated, time_difference=time_difference, notifications=notifications)
 
 
 
@@ -738,24 +899,57 @@ def show_post(post_id):
 def show_community_post(post_id):
     requested_post = db.get_or_404(Post, post_id)
     body = requested_post.content
-    comment_form = CommentForm()
+    reply_form = PostForm()
 
-    if comment_form.validate_on_submit():
+    if reply_form.validate_on_submit():
         if not current_user.is_authenticated:
             flash("You need to login or register to comment.")
             return redirect(url_for("login"))
 
-        new_comment = Comment(
-            text=comment_form.comment_text.data,
-            comment_author=current_user,
-            parent_post=requested_post
+        new_reply = Post(
+            title = "title",
+            content = reply_form.reply_text.data,
+            user = current_user,
+            location = current_user.location,
+            postto = requested_post.location,
+            parent_id=requested_post.id,
+            timestamp = datetime.datetime.now()
         )
-        db.session.add(new_comment)
+
+        db.session.add(new_reply)
         db.session.commit()
 
 
-        comment_form.comment_text.data = ""
-    return render_template("post.html", post=requested_post, current_user=current_user, comform=comment_form, body=body, logged_in=current_user.is_authenticated)
+        reply_form.content.data = ""
+
+            # time calculations
+    def time_difference(start_date):
+        current_date = datetime.datetime.now()
+        duration = current_date - start_date
+
+        # Calculate seconds, minutes, hours, days, months, years
+        seconds = duration.total_seconds()
+        minutes = seconds / 60
+        hours = minutes / 60
+        days = hours / 24
+        months = days / 30.44  # Approximate number of days in a month
+        years = days / 365.25  # Approximate number of days in a year (considering leap years)
+
+        # Determine the appropriate time unit based on the elapsed time
+        if years >= 1:
+            return f"{int(years)}y"
+        elif months >= 1:
+            return f"{int(months)}mo"
+        elif days >= 1:
+            return f"{int(days)}d"
+        elif hours >= 1:
+            return f"{int(hours)}h"
+        elif minutes >= 1:
+            return f"{int(minutes)}m"
+        else:
+            return f"{int(seconds)}s"
+    
+    return render_template("post.html", post=requested_post, current_user=current_user, replyform=reply_form, body=body, logged_in=current_user.is_authenticated)
 
 
 
@@ -782,23 +976,23 @@ def show_event(event_id):
 
 
 
-@app.route("/edit-post/<int:post_id>", methods=["GET", "POST"])
-def edit_post(post_id):
-    post = db.get_or_404(Post, post_id)
-    edit_form = PostForm(
-        title=post.title,
-        postedfrom=post.postedfrom,
-        content=post.content,
-        user_id=current_user.id
-    )
-    if edit_form.validate_on_submit():
-        post.title = edit_form.title.data,
-        post.postedfrom = edit_form.postedfrom.data,
-        post.user_id = current_user.id,
-        post.content = edit_form.content.data
-        db.session.commit()
-        return redirect(url_for("show_post", post_id=post.id))
-    return render_template("make-post.html", form=edit_form, is_edit=True, current_user=current_user)
+# @app.route("/edit-post/<int:post_id>", methods=["GET", "POST"])
+# def edit_post(post_id):
+#     post = db.get_or_404(Post, post_id)
+#     edit_form = PostForm(
+#         title=post.title,
+#         postedfrom=post.postedfrom,
+#         content=post.content,
+#         user_id=current_user.id
+#     )
+#     if edit_form.validate_on_submit():
+#         post.title = edit_form.title.data,
+#         post.postedfrom = edit_form.postedfrom.data,
+#         post.user_id = current_user.id,
+#         post.content = edit_form.content.data
+#         db.session.commit()
+#         return redirect(url_for("show_post", post_id=post.id))
+#     return render_template("make-post.html", form=edit_form, is_edit=True, current_user=current_user)
 
 
 
@@ -822,21 +1016,17 @@ def login():
 
 
 
-@app.route('/search', methods=['GET'])
+@app.route('/search', methods=['POST'])
 def search():
-    query = request.args.get('query')
-
-    # Implement your search logic based on the entire dataset
-    # For each result, determine the type (person, post, community)
-    # Return results as JSON
-    results = [
-        {'type': 'person', 'username': 'example_user'},
-        {'type': 'post', 'post': 'example_post_content'},
-        {'type': 'community', 'community': 'example_community'},
-        # Add more results as needed
-    ]
-
-    return jsonify(results)
+    search_string = request.form['search']
+    posts = Post.query.filter(Post.title.contains(search_string)).all()
+    users = User.query.filter(User.name.contains(search_string)).all()
+    communities = Community.query.filter(Community.name.contains(search_string)).all()
+    return jsonify({
+        'posts': [post.content for post in posts],
+        'users': [user.username for user in users],
+        'communities': [community.name for community in communities]
+    })
 
 
 
@@ -850,31 +1040,32 @@ def get_file(filename):
 @login_required
 def post():
     form = PostForm()
+    with app.app_context():
+        form.postto.choices = [(c.name) for c in Community.query.all() if c.location == current_user.location or c.name == 'Home']
     
     if form.validate_on_submit():
         # Find the community with the specified name
         community_name = form.postto.data
         community = Community.query.filter_by(name=community_name).first()
-        print(form.photo.data)
 
         if community:
             # Create the post and associate it with the community
             post = Post(
-                title=form.title.data,
+                title="title",
                 content=form.content.data,
-                postedfrom = form.postedfrom.data,
                 user=current_user,
                 postto=community.name,
                 location=current_user.location,
-                timestamp = datetime.datetime.now()
+                timestamp = datetime.datetime.now(),
+                parent_id=None
             )
         
-            # Handle file upload
-            if form.photo.data:
-                fn = photos.save(form.photo.data)
-                post.photo_filename = fn
-                post.photo_url = url_for('get_file', filename=fn)
-                print(fn)
+            # # Handle file upload
+            # if form.photo.data:
+            #     fn = photos.save(form.photo.data)
+            #     post.photo_filename = fn
+            #     post.photo_url = url_for('get_file', filename=fn)
+            #     print(fn)
 
             db.session.add(post)
             db.session.commit()

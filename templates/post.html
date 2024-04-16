@@ -124,14 +124,14 @@
 
             <div class="card mt-2 border border-primary rounded" id="post-card-body">
                 <div class="card-body">
-                    <h5 class="card-title">{{ post.title }}</h5>
+                    <!-- <h5 class="card-title">{{ post.title }}</h5> -->
                     <div class="card-text post-content">{{ post.content|safe }}</div>
                     {% if post.photo_url %}
                       <div class="text-center"> 
                         <img src="{{ post.photo_url }}" alt="Post Image" class="post-image">
                       </div>
                     {% endif %}
-                    <p class="card-text"><small class="text-muted"><a href="{{ url_for('show_profile', user_id=post.user.id) }}">{{ post.user.display_name }}</a> | {{ post.postedfrom }} | {{ post.comments|length }} <a href="{{ url_for('show_post', post_id=post.id) }}">Comments</a> | {{ post.timestamp.strftime("%m.%d.%y") }}</small></p>
+                    <p class="card-text"><small class="text-muted"><a href="{{ url_for('show_profile', user_id=post.user.id) }}">{{ post.user.display_name }}</a> | {{ post.replies|length }} <a href="{{ url_for('show_post', post_id=post.id) }}">Replies</a> | {{ time_difference(post.timestamp) }}</small></p>
                 </div>
             </div>
         </div>
@@ -143,32 +143,39 @@
     <div class="container px-4 px-lg-5">
         <div class="row gx-4 gx-lg-5 justify-content-center">
             <div class="col-md-10 col-lg-8 col-xl-7">
+
                 <!-- Card for Comments -->
                 <div class="card mt-3 bg-dark">
                     <div class="card-body comment text-white">
+
                         <!-- Comments Header -->
-                        <h4 class="mb-4">Comments</h4>
+                        <h4 class="mb-4">Replies</h4>
+
                         <!-- Comment Form -->
                         <form id="comment-form" class="d-flex bg-dark" method="POST">
-                          {{ comform.hidden_tag() }}
+                          {{ repform.hidden_tag() }}
+
+                        <div class="input-group"> 
                           <!-- Input for Adding a Comment -->
-                          <input id="comment-button-{{ post.id }}" class="form-control me-2" name="comment_text" placeholder="Add a comment..." aria-label="Comment" required>
-                          <!-- Button to Submit Comment -->
-                          <button class="btn btn-primary" type="submit" onclick='"addComment({{ post.id }})"'>
-                              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-up-short" viewBox="0 0 16 16">
-                                  <path fill-rule="evenodd" d="M8 12a.5.5 0 0 0 .5-.5V5.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 5.707V11.5a.5.5 0 0 0 .5.5z"/>
-                              </svg>
-                          </button>
-                      </form>
+                            <input id="comment-button-{{ post.id }}" class="form-control me-1 bg-dark text-light reply-input" name="reply_text" placeholder="Add a reply..." aria-label="Comment" required>
+
+                            <!-- Button to Submit Comment -->
+                            <button class="btn btn-outline-light fw-bold" style="color:#f00b51" type="submit" id="submit-btn" onclick='"addReply({{ post.id }})"'>
+                                Reply
+                            </button>
+                          </div> 
+
+                        </form>
+
                         <!-- List for Comments -->
                         <ul class="commentList">
-                          {% for comment in post.comments %}
+                          {% for reply in post.replies %}
                               <li class="mb-3">
-                                  <a href="{{ url_for('show_profile', user_id=comment.comment_author.id) }}">
-                                      <p class="text-white"><small style="font-weight: bold;">{{ comment.comment_author.display_name }}</small></p>
+                                  <a href="{{ url_for('show_profile', user_id=reply.user.id) }}">
+                                      <p class="text-white"><small style="font-weight: bold;">{{ reply.user.display_name }}</small></p>
                                   </a>
-                                  <p class="sub-text text-white">{{ comment.text }}</p>
-                                  <p><small> {{ comment.timestamp.strftime("%m.%d.%y") }} | <a class="text-white" href="#">Reply</a></small></p>
+                                  <p class="sub-text text-white">{{ reply.content }}</p>
+                                  <p><small> {{ time_difference(reply.timestamp) }} | <a class="text-white" href="{{ url_for('show_post', post_id=reply.id) }}">Reply</a></small></p>
                               </li>
                           {% endfor %}
                       </ul>
@@ -181,6 +188,10 @@
 
 
 <style>
+
+  .reply-input::placeholder {
+    color: lightgray
+  }
     .commentList {
       list-style-type: none;
       padding: 0;
@@ -225,39 +236,39 @@
       var formData = new FormData(event.target);
 
       // Make an AJAX request
-      fetch('{{ url_for("submit_comment", post_id=post.id) }}', {
+      fetch('{{ url_for("submit_reply", post_id=post.id) }}', {
           method: 'POST',
           body: formData
       })
       .then(response => response.json())
       .then(data => {
           // Update the UI with the new comment data
-          updateUI(data.comment_text, data.comment_author_name, data.timestamp);
+          updateUI(data.reply_text, data.reply_author_name, data.timestamp);
       })
       .catch(error => {
           console.error('Error:', error);
       });
   });
 
-  function updateUI(commentText, commentAuthorName) {
+  function updateUI(replyText, replyAuthorName) {
       // Update the page content without reloading
-      // This could involve appending the new comment to a comments section, for example
       var commentsContainer = document.querySelector('.commentList');
-      var newComment = document.createElement('li');
-      newComment.className = 'mb-3';
-      newComment.innerHTML = `
+      var newReply = document.createElement('li');
+      newReply.className = 'mb-3';
+      newReply.innerHTML = `
           <p class="text-white">
-              <small style="font-weight: bold;">` + commentAuthorName + `</small>
+              <small style="font-weight: bold;">` + replyAuthorName + `</small>
           </p>
-          <p class="sub-text text-white">` + commentText + `</p>
-          <p><small>Just Now | <a class="text-white" href="#">Reply</a></small></p>`;
-      commentsContainer.appendChild(newComment);
+          <p class="sub-text text-white">` + replyText + `</p>
+          <p><small>a few seconds ago | <a class="text-white" href="#">Reply</a></small></p>`;
+      commentsContainer.appendChild(newReply);
 
       // Clear the form
       document.getElementById('comment-form').reset();
   }
 </script>
 
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
 <!--Notis-->
 <script>
@@ -277,6 +288,8 @@
       }
   });
 </script>
+
+
 
 
 {% endblock %}

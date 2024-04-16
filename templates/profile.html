@@ -6,7 +6,7 @@
 {% block title %}{{ display_name }}{% endblock %}
 {% block content %}
 
-<header class="header bg-dark text-white">
+<header class="header-fixed-top bg-dark text-white fixed-top">
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCu4LpF63EcRKbH60CU1ij85xH23NGAkno&libraries=places" async defer></script>
   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
@@ -97,6 +97,17 @@
 
 
 
+<div class="container mt-3 justify-content-center">
+  <div class="p-2 p-md-2 mb-0.5 rounded text-body-emphasis">
+    <div class="container text-center">
+      <h1 class="text-light fw-bold"> 
+      </h1>
+    </div>
+  </div>
+</div>
+
+
+
 <div class="container mt-5">
   <div class="row justify-content-center">
 
@@ -155,10 +166,10 @@
               <ul class="list-group list-unstyled">
                 {% if user.visibility == "Public" %}
                 {% for post in user.posts %}
-                 {% if post.location == user.location %}
+                 {% if post.location == user.location and post.parent == None %}
                   <li class="list-group-item">
                     <p>
-                      <a href="{{ url_for('show_post', post_id=post.id) }}" class="post-title">{{ post.title }}</a>
+                      <a href="{{ url_for('show_post', post_id=post.id) }}" class="post-title">{{ post.content }}</a>
                     </p>
                   </li>
                   {% endif %}
