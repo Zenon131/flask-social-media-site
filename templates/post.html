@@ -122,7 +122,7 @@
 
             </style>
 
-            <div class="card mt-2 border border-primary rounded" id="post-card-body">
+            <div class="card mt-4 border border-primary rounded" id="post-card-body">
                 <div class="card-body">
                     <!-- <h5 class="card-title">{{ post.title }}</h5> -->
                     <div class="card-text post-content">{{ post.content|safe }}</div>
@@ -131,44 +131,41 @@
                         <img src="{{ post.photo_url }}" alt="Post Image" class="post-image">
                       </div>
                     {% endif %}
-                    <p class="card-text"><small class="text-muted"><a href="{{ url_for('show_profile', user_id=post.user.id) }}">{{ post.user.display_name }}</a> | {{ post.replies|length }} <a href="{{ url_for('show_post', post_id=post.id) }}">Replies</a> | {{ time_difference(post.timestamp) }}</small></p>
+                    <p class="card-text">
+                      <small class="text-muted">
+                        {% if post.parent != None %}
+                        <a href="{{ url_for('show_post', post_id=post.parent.id) }}">Back</a> |
+                        {% endif %}<a href="{{ url_for('show_profile', user_id=post.user.id) }}">{{ post.user.display_name }}</a> | {{ post.replies|length }} <a href="{{ url_for('show_post', post_id=post.id) }}">Replies</a> | {{ time_difference(post.timestamp) }}</small></p>
                 </div>
             </div>
+            
         </div>
     </div>
 </div>
 
 <!-- Comment Section -->
+<!-- Comment Section -->
 <div class="comment-section">
-    <div class="container px-4 px-lg-5">
-        <div class="row gx-4 gx-lg-5 justify-content-center">
-            <div class="col-md-10 col-lg-8 col-xl-7">
-
-                <!-- Card for Comments -->
-                <div class="card mt-3 bg-dark">
-                    <div class="card-body comment text-white">
-
-                        <!-- Comments Header -->
-                        <h4 class="mb-4">Replies</h4>
-
-                        <!-- Comment Form -->
-                        <form id="comment-form" class="d-flex bg-dark" method="POST">
+  <div class="container px-4 px-lg-5">
+      <div class="row gx-4 gx-lg-5 justify-content-center">
+          <div class="col-md-10 col-lg-8 col-xl-7">
+              <!-- Card for Comments -->
+              <div class="card mt-3 bg-dark">
+                  <div class="card-body comment text-white">
+                      <!-- Comments Header -->
+                      <h4 class="mb-4">Replies</h4>
+                      <!-- Comment Form -->
+                      <form id="comment-form" class="d-flex bg-dark" method="POST">
                           {{ repform.hidden_tag() }}
-
-                        <div class="input-group"> 
-                          <!-- Input for Adding a Comment -->
-                            <input id="comment-button-{{ post.id }}" class="form-control me-1 bg-dark text-light reply-input" name="reply_text" placeholder="Add a reply..." aria-label="Comment" required>
-
-                            <!-- Button to Submit Comment -->
-                            <button class="btn btn-outline-light fw-bold" style="color:#f00b51" type="submit" id="submit-btn" onclick='"addReply({{ post.id }})"'>
-                                Reply
-                            </button>
+                          <div class="input-group"> 
+                              <input class="form-control me-1 bg-dark text-light reply-input" name="reply_text" placeholder="Add a reply..." aria-label="Comment" required>
+                              <button class="btn btn-outline-light fw-bold" style="color:#f00b51" type="submit" id="submit-btn">
+                                  Reply
+                              </button>
                           </div> 
-
-                        </form>
-
-                        <!-- List for Comments -->
-                        <ul class="commentList">
+                      </form>
+                      <!-- List for Comments -->
+                      <ul class="commentList">
                           {% for reply in post.replies %}
                               <li class="mb-3">
                                   <a href="{{ url_for('show_profile', user_id=reply.user.id) }}">
@@ -176,18 +173,66 @@
                                   </a>
                                   <p class="sub-text text-white">{{ reply.content }}</p>
                                   <p><small> {{ time_difference(reply.timestamp) }} | <a class="text-white" href="{{ url_for('show_post', post_id=reply.id) }}">Reply</a></small></p>
+                                  <!-- Nested replies -->
+                                  <ul class="nested-replies">
+                                      {% for nested_reply in reply.replies %}
+                                          <li class="mb-3 nested-reply">
+                                              <a href="{{ url_for('show_profile', user_id=nested_reply.user.id) }}">
+                                                  <p class="text-white"><small style="font-weight: bold;">{{ nested_reply.user.display_name }}</small></p>
+                                              </a>
+                                              <p class="sub-text text-white">{{ nested_reply.content }}</p>
+                                              <p><small> {{ time_difference(nested_reply.timestamp) }} | <a class="text-white" href="{{ url_for('show_post', post_id=nested_reply.id) }}">Reply</a></small></p>
+                                              <!-- Double nested replies -->
+                                              <ul class="nested-replies">
+                                                {% for nested_reply in reply.replies %}
+                                                  <li class="mb-3 nested-reply">
+                                                    <a href="{{ url_for('show_profile', user_id=nested_reply.user.id) }}">
+                                                        <p class="text-white"><small style="font-weight: bold;">{{ nested_reply.user.display_name }}</small></p>
+                                                    </a>
+                                                    <p class="sub-text text-white">{{ nested_reply.content }}</p>
+                                                    <p><small> {{ time_difference(nested_reply.timestamp) }} | <a class="text-white" href="{{ url_for('show_post', post_id=nested_reply.id) }}">Reply</a></small></p>
+                                                  {% endfor %}
+                                                  </ul>
+                                                </li>
+                                      {% endfor %}
+                                  </ul>
                               </li>
                           {% endfor %}
                       </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
 </div>
 
 
+
 <style>
+
+  .commentList {
+      list-style-type: none;
+      padding-left: 0;
+      margin-top: 20px;
+  }
+
+  .commentList li {
+      border-left: 3px solid #727272;
+      padding-left: 20px;
+      margin-bottom: 10px;
+  }
+
+  .nested-replies {
+      list-style-type: none;
+      padding-left: 20px;
+  }
+
+  .nested-reply {
+      margin-top: 5px;
+      padding: 10px;
+      border-left: 2px solid #f00b51;  /* Distinctive left border */
+  }
+
 
   .reply-input::placeholder {
     color: lightgray
@@ -267,6 +312,7 @@
       document.getElementById('comment-form').reset();
   }
 </script>
+
 
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
