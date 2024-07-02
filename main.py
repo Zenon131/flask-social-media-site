@@ -46,7 +46,7 @@ def load_user(user_id):
     return User.query.get(user_id)
 
 
-cities = ['New York, NY', 'Palo Alto, CA', 'Boston, MA', 'Philadelphia, PA', 'Los Angeles, CA', 'San Franciso, CA']
+cities = ['New York, NY', 'Philadelphia, PA']
 
 
 class CommentForm(FlaskForm):
